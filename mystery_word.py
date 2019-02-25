@@ -23,15 +23,9 @@ import re
 
 # #----------------------------------------------------------------------------
 
-# read words from a file
-main_text = open('words.txt', "r").read().lower()
-main_text = main_text.split()
-user_name = input("What is your name? ")
 
-print("Hello, " + user_name + " are you ready to play hang- Mystery Word!")
-
-
-def guess_check(word_guess):
+# validates whether or not the use guess is a single letter and not a digit
+def check_letter_guess(word_guess):
     while len(word_guess) > 1 or word_guess.isdigit():
         word_guess = input("Enter a single letter please: ").lower()
 
@@ -47,6 +41,10 @@ def continue_loop():
     #     return True
 
 
+def double_guess(user_guess):
+
+
+
 def user_guess_func(letter, comp_word, mystery):
     if_found = False
     if letter in comp_word:
@@ -55,6 +53,7 @@ def user_guess_func(letter, comp_word, mystery):
             if comp_word[i] == letter:
                 mystery = mystery[0:i] + letter + mystery[i+1:len(mystery)]
     return (if_found, mystery)
+
 
 # filters words based on size and adds them to the appropriate difficulty list
 def make_diff_list(main_text):
@@ -90,14 +89,33 @@ def comp_is_diff_list(diff, computer_list):
 
 play_again = True
 
+main_text = []
+
+easy_list = []
+medium_list = []
+hard_list = []
+
+
+# read words from a file make all characters lowercase and strip new lines. Also separate words in file by new lines and make a list out of them
+def get_words_list(filename):
+    with open('words.txt') as file:
+        main_text = [line.strip().lower() for line in file]
+        return main_text
+
+
+# main_text = open('words.txt', "r").read().lower()
+# main_text = main_text.split()
+
+user_name = input("What is your name? ")
+
+print("Hello, " + user_name + " are you ready to play hang- Mystery Word!")
 
 # main gameplay loop and win/lose conditions found here
 while play_again is True:
     # takes in the difficulty, generates blank diff lists and then passes them through the function that checks the lenght of the word and appends it to each specific difficulties list
     difficulty = input("What difficulty would you like to play on? 'Select: \n  Easy, \n  Medium, \n or Hard \n").lower()
-    easy_list = []
-    medium_list = []
-    hard_list = []
+    get_words_list('words.txt')
+
     easy_list, medium_list, hard_list = make_diff_list(main_text)
     # makes the blank comp_list and runs that through the function that changes the comp list based on the difficulty
     comp_list = []
@@ -138,7 +156,7 @@ while play_again is True:
 # main gameplay loop. calls the user guess function and the continue loop function. 
     while turns > 0:
         user_guess = input("Enter your guess: ").lower()
-        guess_check(user_guess)
+        check_letter_guess(user_guess)
         letter_found, mystery_word = user_guess_func(user_guess, computer_word, mystery_word)
         if not letter_found:
             turns -= 1
